@@ -2,6 +2,7 @@
   "name": "donny",
   "version": "1.0.0",
   "main": "index.js",
+<<<<<<< HEAD
  "scripts": {
   "dev": "next dev",
   "build": "next build",
@@ -16,4 +17,13 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   }
+=======
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+>>>>>>> 0816bc278c784d07e31792174d35f4135b8172b0
 }
