@@ -1,22 +1,40 @@
 const express = require("express");
+const { PrismaClient } = require("@prisma/client");
+
 const app = express();
+const prisma = new PrismaClient();
 const PORT = 5000;
 
 // Middleware to parse JSON body
 app.use(express.json());
 
-// GET route for testing
-app.get("/api/feedback", (req, res) => {
-  res.json({ message: "GET request to /api/feedback is working!" });
+// GET route to fetch all feedback
+app.get("/api/feedback", async (req, res) => {
+  try {
+    const feedback = await prisma.feedback.findMany();
+    res.json(feedback);
+  } catch (error) {
+    console.error("Error fetching feedback:", error);
+    res.status(500).json({ error: "An error occurred while fetching feedback." });
+  }
 });
 
-// POST route to handle feedback
-app.post("/api/feedback", (req, res) => {
+// POST route to add feedback
+app.post("/api/feedback", async (req, res) => {
   const { name, email, message } = req.body;
   if (!name || !email || !message) {
     return res.status(400).json({ error: "All fields are required." });
   }
-  res.status(201).json({ message: "Feedback received!" });
+
+  try {
+    const newFeedback = await prisma.feedback.create({
+      data: { name, email, message },
+    });
+    res.status(201).json(newFeedback);
+  } catch (error) {
+    console.error("Error creating feedback:", error);
+    res.status(500).json({ error: "An error occurred while saving feedback." });
+  }
 });
 
 // Start the server
