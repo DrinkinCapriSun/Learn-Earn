@@ -8,7 +8,7 @@ const PORT = 5000;
 // Middleware to parse JSON body
 app.use(express.json());
 
-// GET route to fetch all feedback
+// Existing Feedback Routes (already working)
 app.get("/api/feedback", async (req, res) => {
   try {
     const feedback = await prisma.feedback.findMany();
@@ -19,7 +19,6 @@ app.get("/api/feedback", async (req, res) => {
   }
 });
 
-// POST route to add feedback
 app.post("/api/feedback", async (req, res) => {
   const { name, email, message } = req.body;
   if (!name || !email || !message) {
@@ -34,6 +33,81 @@ app.post("/api/feedback", async (req, res) => {
   } catch (error) {
     console.error("Error creating feedback:", error);
     res.status(500).json({ error: "An error occurred while saving feedback." });
+  }
+});
+
+// New Learning Hub Routes
+app.get("/api/learning-hub/courses", async (req, res) => {
+  try {
+    const courses = await prisma.course.findMany();
+    res.json(courses);
+  } catch (error) {
+    console.error("Error fetching courses:", error);
+    res.status(500).json({ error: "An error occurred while fetching courses." });
+  }
+});
+
+app.post("/api/learning-hub/courses", async (req, res) => {
+  const { title, description, scormUrl } = req.body;
+
+  if (!title || !description || !scormUrl) {
+    return res.status(400).json({ error: "All fields are required." });
+  }
+
+  try {
+    const newCourse = await prisma.course.create({
+      data: { title, description, scormUrl },
+    });
+    res.status(201).json(newCourse);
+  } catch (error) {
+    console.error("Error creating course:", error);
+    res.status(500).json({ error: "An error occurred while saving the course." });
+  }
+});
+
+// GET route to fetch a single course by ID
+app.get("/api/learning-hub/courses/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const course = await prisma.course.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!course) {
+      return res.status(404).json({ error: "Course not found" });
+    }
+
+    res.json(course);
+  } catch (error) {
+    console.error("Error fetching course:", error);
+    res.status(500).json({ error: "An error occurred while fetching the course." });
+  }
+});
+
+// Middleware to check if the user is an admin
+function isAdmin(req, res, next) {
+  const { role } = req.headers;
+
+  if (role !== "admin") {
+    return res.status(403).json({ error: "Access denied. Admins only." });
+  }
+  next();
+}
+
+// DELETE route to delete a course (admin-only)
+app.delete("/api/learning-hub/courses/:id", isAdmin, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await prisma.course.delete({
+      where: { id: parseInt(id) },
+    });
+
+    res.json({ message: "Course deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting course:", error);
+    res.status(500).json({ error: "An error occurred while deleting the course." });
   }
 });
 
