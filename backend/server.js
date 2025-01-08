@@ -1,26 +1,64 @@
 const express = require("express");
 const { PrismaClient } = require("@prisma/client");
+const jwt = require("jsonwebtoken");
+const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
 const prisma = new PrismaClient();
 const PORT = 5000;
 
+// Static JWT secret for simplicity (move to environment variable for production)
+const JWT_SECRET = process.env.JWT_SECRET || "learn&earn";
+
 // Middleware to parse JSON body
 app.use(express.json());
 
-// Existing Feedback Routes (already working)
+// Enable CORS for frontend requests
+app.use(cors({ origin: "http://localhost:3000" })); // Adjust the origin in production
+
+// -------------------- Middleware -------------------- //
+
+// Middleware to check if the user is an admin
+function isAdmin(req, res, next) {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ error: "Unauthorized. Token is required." });
+    }
+
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    if (decoded.role !== "admin") {
+      return res.status(403).json({ error: "Access denied. Admins only." });
+    }
+
+    req.user = decoded; // Attach user details to the request object
+    next();
+  } catch (error) {
+    console.error("Error verifying token:", error.message);
+    res.status(401).json({ error: "Unauthorized. Invalid token." });
+  }
+}
+
+// -------------------- Feedback Routes -------------------- //
+
+// Get all feedback
 app.get("/api/feedback", async (req, res) => {
   try {
     const feedback = await prisma.feedback.findMany();
-    res.json(feedback);
+    res.status(200).json(feedback);
   } catch (error) {
     console.error("Error fetching feedback:", error);
     res.status(500).json({ error: "An error occurred while fetching feedback." });
   }
 });
 
+// Submit new feedback
 app.post("/api/feedback", async (req, res) => {
   const { name, email, message } = req.body;
+
   if (!name || !email || !message) {
     return res.status(400).json({ error: "All fields are required." });
   }
@@ -36,18 +74,21 @@ app.post("/api/feedback", async (req, res) => {
   }
 });
 
-// New Learning Hub Routes
+// -------------------- Courses Routes -------------------- //
+
+// Get all courses
 app.get("/api/learning-hub/courses", async (req, res) => {
   try {
     const courses = await prisma.course.findMany();
-    res.json(courses);
+    res.status(200).json(courses);
   } catch (error) {
     console.error("Error fetching courses:", error);
     res.status(500).json({ error: "An error occurred while fetching courses." });
   }
 });
 
-app.post("/api/learning-hub/courses", async (req, res) => {
+// Add a new course (Admin-only)
+app.post("/api/learning-hub/courses", isAdmin, async (req, res) => {
   const { title, description, scormUrl } = req.body;
 
   if (!title || !description || !scormUrl) {
@@ -65,7 +106,7 @@ app.post("/api/learning-hub/courses", async (req, res) => {
   }
 });
 
-// GET route to fetch a single course by ID
+// Get a specific course by ID
 app.get("/api/learning-hub/courses/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -78,24 +119,14 @@ app.get("/api/learning-hub/courses/:id", async (req, res) => {
       return res.status(404).json({ error: "Course not found" });
     }
 
-    res.json(course);
+    res.status(200).json(course);
   } catch (error) {
     console.error("Error fetching course:", error);
     res.status(500).json({ error: "An error occurred while fetching the course." });
   }
 });
 
-// Middleware to check if the user is an admin
-function isAdmin(req, res, next) {
-  const { role } = req.headers;
-
-  if (role !== "admin") {
-    return res.status(403).json({ error: "Access denied. Admins only." });
-  }
-  next();
-}
-
-// DELETE route to delete a course (admin-only)
+// Delete a course (Admin-only)
 app.delete("/api/learning-hub/courses/:id", isAdmin, async (req, res) => {
   const { id } = req.params;
 
@@ -103,13 +134,60 @@ app.delete("/api/learning-hub/courses/:id", isAdmin, async (req, res) => {
     await prisma.course.delete({
       where: { id: parseInt(id) },
     });
-
-    res.json({ message: "Course deleted successfully." });
+    res.status(200).json({ message: "Course deleted successfully." });
   } catch (error) {
     console.error("Error deleting course:", error);
     res.status(500).json({ error: "An error occurred while deleting the course." });
   }
 });
 
-// Start the server
+// -------------------- User Management Routes -------------------- //
+
+// Get all users
+app.get("/api/users", async (req, res) => {
+  try {
+    const users = await prisma.user.findMany();
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ error: "An error occurred while fetching users." });
+  }
+});
+
+// Create a new user
+app.post("/api/users", async (req, res) => {
+  const { username, email, role } = req.body;
+
+  if (!username || !email || !role) {
+    return res.status(400).json({ error: "All fields are required." });
+  }
+
+  try {
+    const newUser = await prisma.user.create({
+      data: { username, email, role },
+    });
+    res.status(201).json(newUser);
+  } catch (error) {
+    console.error("Error creating user:", error);
+    res.status(500).json({ error: "An error occurred while creating the user." });
+  }
+});
+
+// Delete a user (Admin-only)
+app.delete("/api/users/:id", isAdmin, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await prisma.user.delete({
+      where: { id: parseInt(id) },
+    });
+    res.status(200).json({ message: "User deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({ error: "An error occurred while deleting the user." });
+  }
+});
+
+// -------------------- Start the Server -------------------- //
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

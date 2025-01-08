@@ -8,11 +8,15 @@ datasource db {
 }
 
 model Feedback {
-  id      Int    @id @default(autoincrement())
+  id      Int     @id @default(autoincrement())
   name    String
   email   String
   message String
+  createdAt DateTime @default(now())
+
+  @@unique([name, email, message]) // Add this line to enforce uniqueness
 }
+
 
 model Course {
   id          Int      @id @default(autoincrement())
@@ -22,3 +26,12 @@ model Course {
   createdAt   DateTime @default(now())
 }
 
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  role      String   @default("user") // user or admin
+  createdAt DateTime @default(now())
+}
