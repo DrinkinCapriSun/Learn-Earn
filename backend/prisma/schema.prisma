@@ -22,3 +22,11 @@ model Course {
   createdAt   DateTime @default(now())
 }
 
+model User {
+  id       Int    @id @default(autoincrement())
+  username String
+  email    String @unique
+  role     String @default("user") // Default role is "user"
+}
+
+
