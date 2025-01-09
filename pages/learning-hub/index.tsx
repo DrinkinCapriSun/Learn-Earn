@@ -61,18 +61,6 @@ const LearningHub: React.FC = () => {
 
         {/* Main Features Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/* Course Catalog */}
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-              </svg>
-            </div>
-            <h2 className="text-xl font-semibold mb-2 text-black">Course Catalog</h2>
-            <p className="text-black mb-4">Browse through our extensive collection of SCORM-compliant courses</p>
-            <Link href="/learning-hub/courses" className="text-black font-medium hover:underline">View Courses →</Link>
-          </div>
-
           {/* Toolbase */}
           <div className="bg-white p-6 rounded-lg shadow-sm">
             <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
@@ -83,6 +71,18 @@ const LearningHub: React.FC = () => {
             <h2 className="text-xl font-semibold mb-2 text-black">Toolbase</h2>
             <p className="text-black mb-4">Access our comprehensive collection of learning and development tools.</p>
             <Link href="/learning-hub/toolbase" className="text-black font-medium hover:underline">Explore Tools →</Link>
+          </div>
+
+          {/* Course Catalog */}
+          <div className="bg-white p-6 rounded-lg shadow-sm">
+            <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
+              <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+              </svg>
+            </div>
+            <h2 className="text-xl font-semibold mb-2 text-black">Course Catalog</h2>
+            <p className="text-black mb-4">Browse through our extensive collection of SCORM-compliant courses</p>
+            <Link href="/learning-hub/courses" className="text-black font-medium hover:underline">View Courses →</Link>
           </div>
 
           {/* Progress Tracking */}
