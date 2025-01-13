@@ -106,6 +106,30 @@ app.post("/api/learning-hub/courses", isAdmin, async (req, res) => {
   }
 });
 
+app.get("/api/feedback", async (req, res, next) => {
+  try {
+    const feedback = await prisma.feedback.findMany();
+    res.status(200).json(feedback);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post("/api/feedback", async (req, res, next) => {
+  const { name, email, message } = req.body;
+  if (!name || !email || !message) {
+    return res.status(400).json({ error: "All fields are required." });
+  }
+
+  try {
+    const newFeedback = await prisma.feedback.create({ data: { name, email, message } });
+    res.status(201).json(newFeedback);
+  } catch (error) {
+    next(error);
+  }
+});
+
+
 // Get a specific course by ID
 app.get("/api/learning-hub/courses/:id", async (req, res) => {
   const { id } = req.params;
