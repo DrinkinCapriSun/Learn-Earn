@@ -14,6 +14,10 @@
   "description": "",
   "dependencies": {
     "@prisma/client": "^6.0.1",
+<<<<<<< HEAD
+=======
+    "cors": "^2.8.5",
+>>>>>>> f256d3345487b437887d216b7765b74ba89e81be
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2"
