@@ -3,7 +3,7 @@ const { PrismaClient } = require('@prisma/client');
 const router = express.Router();
 const prisma = new PrismaClient();
 
-// Fetch all users
+
 router.get('/', async (req, res) => {
     try {
         const users = await prisma.user.findMany();
@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Create a new user
+
 router.post('/', async (req, res) => {
     const { name, email } = req.body;
     try {

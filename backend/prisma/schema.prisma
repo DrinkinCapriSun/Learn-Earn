@@ -13,8 +13,6 @@ model Feedback {
   email     String
   message   String
   createdAt DateTime @default(now())
-
-  @@unique([name, email, message])
 }
 
 model Course {
@@ -31,7 +29,7 @@ model User {
   username    String       @unique
   email       String       @unique
   password    String
-  role        String       @default("user")
+  role        String       @default("user") // 'user', 'admin', etc.
   createdAt   DateTime     @default(now())
   enrollments Enrollment[]
 }
@@ -41,8 +39,9 @@ model Enrollment {
   userId     Int
   courseId   Int
   enrolledAt DateTime @default(now())
-  course     Course   @relation(fields: [courseId], references: [id])
-  user       User     @relation(fields: [userId], references: [id])
+  
+  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, courseId])
+  @@unique([userId, courseId]) // Ensure one enrollment per user per course
 }

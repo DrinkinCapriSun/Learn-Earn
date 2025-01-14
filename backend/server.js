@@ -8,6 +8,10 @@ const app = express();
 const prisma = new PrismaClient();
 const PORT = 5000;
 
+// authRoutes
+const authRoutes = require("./authRoutes");
+app.use("/api/auth", authRoutes);
+
 // Static JWT secret for simplicity (move to environment variable for production)
 const JWT_SECRET = process.env.JWT_SECRET || "learn&earn";
 
