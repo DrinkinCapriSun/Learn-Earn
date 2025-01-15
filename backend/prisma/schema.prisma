@@ -8,41 +8,41 @@ datasource db {
 }
 
 model Feedback {
-  id      Int     @id @default(autoincrement())
-  name    String
-  email   String
-  message String
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  message   String
   createdAt DateTime @default(now())
 
-  @@unique([name, email, message]) // Add this line to enforce uniqueness
+  @@unique([name, email, message])
 }
-
 
 model Course {
-  id          Int      @id @default(autoincrement())
-  title       String
+  id          Int          @id @default(autoincrement())
+  title       String       @unique
   description String
   scormUrl    String
-  createdAt   DateTime @default(now())
+  createdAt   DateTime     @default(now())
+  enrollments Enrollment[]
 }
-
-<<<<<<< HEAD
-model User {
-  id       Int    @id @default(autoincrement())
-  username String
-  email    String @unique
-  role     String @default("user") // Default role is "user"
-}
-
-
-=======
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  email     String   @unique
-  password  String
-  role      String   @default("user") // user or admin
-  createdAt DateTime @default(now())
+  id          Int          @id @default(autoincrement())
+  username    String       @unique
+  email       String       @unique
+  password    String
+  role        String       @default("user") // Default role is "user"
+  createdAt   DateTime     @default(now())
+  enrollments Enrollment[]
 }
->>>>>>> f256d3345487b437887d216b7765b74ba89e81be
+
+model Enrollment {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  courseId   Int
+  enrolledAt DateTime @default(now())
+  course     Course   @relation(fields: [courseId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, courseId])
+}

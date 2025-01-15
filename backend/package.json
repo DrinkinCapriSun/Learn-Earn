@@ -13,16 +13,13 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@prisma/client": "^6.0.1",
-<<<<<<< HEAD
-=======
+    "@prisma/client": "^6.2.1",
     "cors": "^2.8.5",
->>>>>>> f256d3345487b437887d216b7765b74ba89e81be
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
-    "prisma": "^6.0.1"
+    "prisma": "^6.2.1"
   }
 }
