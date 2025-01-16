@@ -9,6 +9,11 @@ const prisma = new PrismaClient();
 const PORT = process.env.PORT || 5000;
 
 // JWT secret from environment variable or fallback for simplicity
+// authRoutes
+const authRoutes = require("./authRoutes");
+app.use("/api/auth", authRoutes);
+
+// Static JWT secret for simplicity (move to environment variable for production)
 const JWT_SECRET = process.env.JWT_SECRET || "learn&earn";
 
 // Middleware setup
