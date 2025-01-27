@@ -16,12 +16,12 @@ model Feedback {
 }
 
 model Course {
-  id          Int          @id @default(autoincrement())
-  title       String       @unique
+  id          Int      @id @default(autoincrement())
+  title       String
   description String
-  scormUrl    String
-  createdAt   DateTime     @default(now())
-  enrollments Enrollment[]
+  price       Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model User {
