@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Test</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <h1>Flask Testing Page</h1>
+    <div>
+        <button id="fetch-users">Fetch Users</button>
+        <ul id="users-list"></ul>
+    </div>
+
+    <div>
+        <h3>Add a User</h3>
+        <input type="text" id="name" placeholder="Name" />
+        <input type="email" id="email" placeholder="Email" />
+        <button id="add-user">Add User</button>
+    </div>
+
+    <script>
+        // Fetch users from API
+        document.getElementById('fetch-users').addEventListener('click', async () => {
+            const response = await fetch('/api/users');
+            const users = await response.json();
+            const userList = document.getElementById('users-list');
+            userList.innerHTML = '';
+            users.forEach(user => {
+                const li = document.createElement('li');
+                li.textContent = `${user.name} (${user.email})`;
+                userList.appendChild(li);
+            });
+        });
+
+        // Add a user via API
+        document.getElementById('add-user').addEventListener('click', async () => {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const response = await fetch('/api/users', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email }),
+            });
+            const result = await response.json();
+            alert(result.message);
+        });
+    </script>
+</body>
+</html>

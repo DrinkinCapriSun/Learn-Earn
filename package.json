@@ -13,7 +13,9 @@
   "description": "",
   "dependencies": {
     "@prisma/client": "^6.2.1",
+    "dotenv": "^16.4.7",
     "next": "^15.0.3",
+    "nodemailer": "^6.10.0",
     "pg": "^8.13.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
